@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %} {{ product.name }} | Product Detail {% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+
+    <!-- Product Image -->
+    <div class="col-md-4 text-center mb-4">
+      {% if product.image %}
+        <img src="{{ product.image.url }}"
+             class="img-fluid product-detail-img img-thumbnail"
+             alt="{{ product.name }}">
+      {% else %}
+        <img src="https://via.placeholder.com/400x400?text=No+Image"
+             class="img-fluid product-detail-img img-thumbnail"
+             alt="No image">
+      {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h3 class="card-title">{{ product.name }}</h3>
+          <h4 class="text-success mb-3">₹ {{ product.price }}</h4>
+
+          <p class="card-text text-muted">
+            {{ product.description }}
+          </p>
+
+          <hr>
+          {% if request.session %}
+          {% if item_in_cart %}
+
+          <a href="/show_cart" class="btn btn-success mt-3">
+            Go to Cart
+          </a>
+          {% else %}
+
+          <!-- Add to cart -->
+          <form method="post" action="{% url 'add_to_cart' %}">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+
+            <div class="form-group w-50">
+              <label for="quantity">Quantity</label>
+              <input type="number"
+                     id="quantity"
+                     name="quantity"
+                     value="1"
+                     min="1"
+                     class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">
+              Add to Cart
+            </button>
+          {% endif %}
+          {% endif %}
+
+            <a href="/" class="btn btn-outline-secondary mt-3 ml-2">
+              Back to Products
+            </a>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

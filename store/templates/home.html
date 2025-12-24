@@ -1,0 +1,63 @@
+{%  extends 'base.html' %}
+{% block content %}
+  <div class="container-fluid mt-3">
+   <div class = 'row'>
+
+    <div class = 'col-lg-3'>
+    
+      <div class = 'list-group'>
+        <a href ="/" class = "list-group-item list-group-item-action">ALL PRODUCT</a>
+        {% for category in category %} 
+        <a href ="/?category={{category.id}}" class = "list-group-item list-group-item-action">{{category.id}} {{category.name}}</a>
+        {% endfor %}
+
+
+      </div>
+      
+    </div>
+
+
+
+    <div id = "product"  class = 'col-lg-9',>
+    <div class="row mx-auto">
+    {% for product in products %}
+    <div class="card mx-auto mb-3" style="width: 18rem;">
+
+    {% if product.image %}
+      <a href="/productdetail/{{ product.id }}">
+        <img src="{{ product.image.url }}"
+             class="card-img-top product-img"
+             alt="{{ product.name }}">
+      </a>
+    {% else %}
+      <img src="https://via.placeholder.com/286x180?text=No+Image"
+           class="card-img-top product-img"
+           alt="No image">
+    {% endif %}
+
+    <div class="card-body text-center">
+      <h5 class="card-title">{{ product.name }}</h5>
+      <h6 class="card-text text-muted">Rs. {{ product.price }}</h6>
+    </div>
+
+  </div>
+{% endfor %}
+{% if products|length == 0 %}
+    <div class="text-center mt-5">
+        <h4>No products found 😕</h4>
+        <p>Try searching with a different keyword.</p>
+    </div>
+{% endif %}
+
+</div>
+
+
+    </div>
+
+   </div>
+  </div>
+
+ {% endblock %}
+
+
+

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} My Cart {% endblock %}
+
+{% block content %}
+
+<div class = "container">
+    <div class ="border rounded p-4 m-4">
+        <p class = "display-4 text-center"> Your Cart Items </p>
+        <hr>
+        <table class = "table table-striped">
+            <thead>
+            <tr>
+                <th> S. No </th>
+                <th> Image </th>
+                <th> Product Name </th>
+                <th> Quantity </th>
+                <th> Price </th>
+                <th></th>
+                <th> Action </th>
+            </tr>    
+            </thead>
+            <tbody>
+                {% for cart in cart%}
+                <tr>
+                    <td> {{forloop.counter}} </td>
+                    <td> <img style = "height:80px;" src="{{cart.product.image.url}}" class="rounded-circle" alt="No image"> </td>
+                    <td> {{cart.product.name}} </td>
+                    <td> {{cart.quantity}} </td>
+                    <td> ₹{{cart.product.price}} </td>
+                    
+
+                    <td><input type ="button" pid = "{{cart.product.id}}" class = "minus-cart btn btn-primary" value ="-"> </td>
+                    <td><span class="quantity">{{ cart.quantity }}</span></td>
+                    <td><input type ="button" pid="{{cart.product.id}}" class = "plus-cart btn btn-primary" value ="+"> </td>
+                    <td> <button class="btn btn-danger remove-cart" pid="{{ cart.product.id }}"> Remove </button> </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+        <hr>
+        <div class ="m-3 p-3">
+            <a       
+                href="#" data-toggle="modal" data-target="#exampleModal"
+                class="btn btn-outline-info rounded col-lg-3 float-right">
+                Check out
+            </a>
+
+           
+
+        </div>
+
+    </div>
+</div>
+
+
+<!---checkout-->
+
+
+<!-- Modal -->
+<!-- Checkout Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Checkout</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form method="POST" action="{% url 'checkout' %}">
+          {% csrf_token %}
+
+          <!-- Customer Name -->
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text"
+                   name="name"
+                   class="form-control"
+                   placeholder="Enter your name"
+                   required>
+          </div>
+
+          <!-- Phone (readonly from session) -->
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text"
+                   name="phone"
+                   class="form-control"
+                   value="{{ request.session.phone }}"
+                   readonly>
+          </div>
+
+          <!-- Address -->
+          <div class="form-group">
+            <label>Delivery Address</label>
+            <textarea name="address"
+                      class="form-control"
+                      rows="3"
+                      placeholder="Enter delivery address"
+                      required></textarea>
+          </div>
+
+          <!-- Total Amount -->
+          <div class="form-group">
+            <label>Total Amount</label>
+            <input type="text"
+                   name = "total"
+                   class="form-control"
+                   value="₹ {{ total }}"
+                   readonly>
+          </div>
+
+          <input type = 'submit' class="btn btn-outline-info rounded col-lg-3 float-right mt-3" value ='Place Order'>
+
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$('.plus-cart').click(function () {
+    let id = $(this).attr("pid").toString();
+    let quantitySpan = $(this).closest('tr').find('.quantity');
+
+    $.ajax({
+        type: "GET",
+        url: "/plus_cart",
+        data: { prod_id: id },
+        success: function (data) {
+            quantitySpan.text(data.quantity);
+        }
+    });
+});
+
+$('.minus-cart').click(function () {
+    let id = $(this).attr("pid").toString();
+    let quantitySpan = $(this).closest('tr').find('.quantity');
+
+    $.ajax({
+        type: "GET",
+        url: "/minus_cart",
+        data: { prod_id: id },
+        success: function (data) {
+            quantitySpan.text(data.quantity);
+        }
+    });
+});
+</script>
+
+<script>
+$(document).on('click', '.remove-cart', function () {
+    let id = $(this).attr("pid");
+    let row = $(this).closest('tr');
+
+    $.ajax({
+        type: "GET",
+        url: "/remove_cart",
+        data: { prod_id: id },
+        success: function (data) {
+            if (data.success) {
+                row.remove();   // remove row from table
+            }
+        }
+    });
+});
+</script>
+
+
+{% endblock %}
+
+
