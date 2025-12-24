@@ -1,14 +1,14 @@
 {
   "builds": [
     {
-      "src": "manage.py",
+      "src": "e_commerce_website/asgi.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "manage.py"
+      "dest": "e_commerce_website/asgi.py"
     }
   ]
 }
